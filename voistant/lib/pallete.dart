@@ -1,3 +1,4 @@
+// よく使う色をまとめておきます
 import 'package:flutter/material.dart';
 
 class Pallete {
@@ -10,4 +11,7 @@ class Pallete {
   static const Color borderColor = Color.fromRGBO(200, 200, 200, 1);
   static const Color blackColor = Colors.black;
   static const Color whiteColor = Colors.white;
+  // shadeの指定はできない
+  // static const Color yellowColor = Colors.yellow.shade50;
+  static const Color yellowColor = Color.fromRGBO(255, 250, 176, 1);
 }
