@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:speech_to_text/speech_recognition_result.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voistant/feature_box.dart';
 import 'package:voistant/pallete.dart';
 
@@ -12,19 +14,60 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  // 音声入力の設定
+  final speechToText = SpeechToText();
+  String lastWords = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    initSpeechToText();
+  }
+
+  Future<void> initSpeechToText() async {
+    await speechToText.initialize();
+    setState(() {});
+  }
+
+  /// Each time to start a speech recognition session
+  Future<void> startListening() async {
+    await speechToText.listen(onResult: onSpeechResult);
+    setState(() {});
+  }
+
+  Future<void> stopListening() async {
+    await speechToText.stop();
+    setState(() {});
+  }
+
+  void onSpeechResult(SpeechRecognitionResult result) {
+    setState(() {
+      lastWords = result.recognizedWords;
+    });
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+    speechToText.stop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        // appbarの文字表示
-        appBar: AppBar(
-          title: Text(
-            "ChatGPT",
-          ),
-          // ハンバーガーマーク
-          leading: Icon(Icons.menu),
+      // appbarの文字表示
+      appBar: AppBar(
+        title: Text(
+          "ChatGPT",
         ),
-        // 写真の設定
-        body: Column(
+        // ハンバーガーマーク
+        leading: Icon(Icons.menu),
+      ),
+      // 写真の設定
+      body: SingleChildScrollView(
+        child: Column(
           children: [
             Stack(
               children: [
@@ -136,10 +179,21 @@ class _HomePageState extends State<HomePage> {
             ),
           ],
         ),
-        // マイクのアイコンを表示させる（Scaffoldウィジェット内に記載する）
-        floatingActionButton: FloatingActionButton(
-          onPressed: () {},
-          child: Icon(Icons.mic),
-        ));
+      ),
+      // マイクのアイコンを表示させる（Scaffoldウィジェット内に記載する）
+      floatingActionButton: FloatingActionButton(
+        // マイクボタンを押した時、音声認識をスタートさせる
+        onPressed: () async {
+          if (await speechToText.hasPermission && speechToText.isNotListening) {
+            await startListening();
+          } else if (speechToText.isListening) {
+            await stopListening();
+          } else {
+            initSpeechToText();
+          }
+        },
+        child: Icon(Icons.mic),
+      ),
+    );
   }
 }
