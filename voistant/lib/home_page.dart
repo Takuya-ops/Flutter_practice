@@ -4,6 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:speech_to_text/speech_recognition_result.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:voistant/feature_box.dart';
+import 'package:voistant/openai_service.dart';
 import 'package:voistant/pallete.dart';
 
 class HomePage extends StatefulWidget {
@@ -17,6 +18,8 @@ class _HomePageState extends State<HomePage> {
   // 音声入力の設定
   final speechToText = SpeechToText();
   String lastWords = "";
+  // 作成したopenai_serviceのクラスをインスタンス化
+  final OpenAIService openAIService = OpenAIService();
 
   @override
   void initState() {
@@ -187,6 +190,8 @@ class _HomePageState extends State<HomePage> {
           if (await speechToText.hasPermission && speechToText.isNotListening) {
             await startListening();
           } else if (speechToText.isListening) {
+            // マイクを止めた時にhttpリクエストを投げるようにする
+            await openAIService.isArtPromptAPI(lastWords);
             await stopListening();
           } else {
             initSpeechToText();
