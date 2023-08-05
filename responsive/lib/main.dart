@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:responsive/layout_builder_example.dart';
-import 'package:responsive/media_query_example.dart'; // 新しく作成したファイルをインポート
+import 'package:responsive/weather_data.dart';
 
 void main() {
   runApp(MyApp());
@@ -12,12 +11,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: Text('MediaQuery Example'),
+          title: Text('Weather App'),
         ),
-        body: Center(
-          // child: MediaQueryExample(),
-          child: LayoutBuilderExample(), // 新しく作成したウィジェットを読み込む
-        ),
+        body: WeatherData(), // WeatherDataウィジェットを表示
       ),
     );
   }
